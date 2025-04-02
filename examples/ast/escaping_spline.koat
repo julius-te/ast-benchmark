@@ -1,0 +1,9 @@
+# The original uses a probability of 1 / (x + 1)
+
+(GOAL ALMOSTSURETERMINATION)
+(STARTTERM (FUNCTIONSYMBOLS f))
+(VAR x)
+(RULES
+  f(x) -> g(x)
+  g(x) -> (x^-1):g(0) :+: (1 - x^-1):g(x + 1) :|: x > 0
+)
