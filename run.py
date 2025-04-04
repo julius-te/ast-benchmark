@@ -49,11 +49,13 @@ def process_tool_and_file(file: str, cmd: str, options: dict[str, str]) -> str:
         if result < min_bound:
             min_bound = result
             min_option = optionName
+        if min_bound == Bound.FINITE:
+            break
 
-    if min_option == "default":
+    if min_bound != Bound.FINITE or min_option == "default":
         return min_bound
     else:
-        return f"{min_bound} ({min_option})"
+        return f"{min_bound} [{min_option}]"
 
 def process_file(file: str, tools: dict[str, Any]) -> list[str]:
     row = [file]
@@ -63,25 +65,46 @@ def process_file(file: str, tools: dict[str, Any]) -> list[str]:
         row.append(process_tool_and_file(file, cmd, options))
     return row
 
+def cartesian_product(*options: dict[str, str]) -> dict[str, str]:
+    """
+    For input {"a": "1", "b": "2"}, {"c": "3"}, {"d": "4", "e": "5"} return
+    {"a,c,d": "1 3 4", "a,c,e": "1 3 5", "b,c,d": "2 3 4", "b,c,e": "2 3 5"}
+    """
+    if len(options) == 1:
+        return options[0]
+    else:
+        result = {}
+        for key in options[0]:
+            for sub_key, sub_value in cartesian_product(*options[1:]).items():
+                result[key + ", " + sub_key] = options[0][key] + " " + sub_value
+        return result
+
+
 path_to_koat = "~/uni/ba/KoAT2/_build/default/bin/main.exe prob-analyse"
 
-koat_options = {
-    "default": "",
-    "cfr fvs": "--pe --pe-fvs",
-    "cfr loop heads": "--pe"
-}
+koat_options = cartesian_product(
+    {
+        "past": "--goal PAST --plrf ED",
+        "\033[93mast ed\033[0m": "--goal AST --plrf ED",
+        "\033[94mast asd\033[0m": "--goal AST --plrf ASD",
+    },
+    {
+        "cfr off": "",
+        "cfr fvs": "--pe --pe-fvs",
+        "cfr loop heads": "--pe",
+    },
+    {
+        "twn off, mprf off": "",
+        "twnlog, mprf off": "--classic-local twnlog",
+        "twn, mprf off": "--classic-local twn",
+        "twnlog, mprf on": "--classic-local twnlog,mprf",
+        "twn, mprf on": "--classic-local twn,mprf",
+    },
+)
 
 tools = {
-    "KoAT2 PAST": {
-        "cmd": f"{path_to_koat} --goal PAST --plrf ED {OPTIONS} -i",
-        "options": koat_options
-    },
-    "KoAT2 AST (ED)": {
-        "cmd": f"{path_to_koat} --goal AST --plrf ED {OPTIONS} -i",
-        "options": koat_options
-    },
-    "KoAT2 AST (ASD)": {
-        "cmd": f"{path_to_koat} --goal AST --plrf ASD {OPTIONS} -i",
+    "KoAT2": {
+        "cmd": f"{path_to_koat} {OPTIONS} -i",
         "options": koat_options
     }
 }
