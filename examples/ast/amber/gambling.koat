@@ -1,0 +1,8 @@
+(GOAL ALMOSTSURETERMINATION)
+(STARTTERM (FUNCTIONSYMBOLS f))
+(VAR bet winnings)
+(RULES
+  f(bet, winnings) -> g(bet, 0) :|: bet > 0
+  g(bet, winnings) -> h(2*bet, winnings)
+  h(bet, winnings) -> [1/100]:g(bet, winnings + bet) :+: [99/100]:g(bet, winnings - bet) :|: winnings <= 0
+)

@@ -1,0 +1,7 @@
+(GOAL ALMOSTSURETERMINATION)
+(STARTTERM (FUNCTIONSYMBOLS f))
+(VAR delta x)
+(RULES
+  f(delta, x) -> g(1, x)
+  g(delta, x) -> [1/2]:g(2*delta, x + delta) :+: [1/2]:g(2*delta, x - delta) :|: x > 0
+)
