@@ -1,0 +1,7 @@
+(GOAL ALMOSTSURETERMINATION)
+(STARTTERM (FUNCTIONSYMBOLS f))
+(VAR x)
+(RULES
+  f(x) -> g(x)
+  g(x) -> [1/2]:g(x-2) :+: [1/2]:g(x + GEOMETRIC(0.5)) :|: x > 0
+)
