@@ -89,11 +89,6 @@ path_to_koat = args.koat
 
 koat_options = cartesian_product(
     {
-        "past": "--goal PAST --plrf ED",
-        "\033[93mast ed\033[0m": "--goal AST --plrf ED",
-        "\033[94mast asd\033[0m": "--goal AST --plrf ASD",
-    },
-    {
         "cfr off": "",
         "cfr fvs": "--pe --pe-fvs",
         "cfr loop heads": "--pe",
@@ -106,11 +101,22 @@ koat_options = cartesian_product(
         "twn, mprf on": "--classic-local twn,mprf",
     },
 )
+default_options = {
+    "default": ""
+}
 
 tools = {
-    "KoAT2": {
-        "cmd": f"{path_to_koat} prob-analyse {OPTIONS} -i",
+    "KoAT2 PAST": {
+        "cmd": f"{path_to_koat} prob-analyse --goal PAST --plrf ED {OPTIONS} -i",
         "options": koat_options
+    },
+    "KoAT2 AST ED": {
+        "cmd": f"{path_to_koat} prob-analyse --goal AST --plrf ED {OPTIONS} -i",
+        "options": default_options
+    },
+    "KoAT2 AST ASD": {
+        "cmd": f"{path_to_koat} prob-analyse --goal AST --plrf ASD {OPTIONS} -i",
+        "options": default_options
     }
 }
 
