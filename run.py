@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-from typing import Callable, Any
+from typing import Any
 import os
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from tabulate import tabulate
 from tqdm import tqdm
 from enum import Enum
@@ -79,8 +80,12 @@ def cartesian_product(*options: dict[str, str]) -> dict[str, str]:
                 result[key + ", " + sub_key] = options[0][key] + " " + sub_value
         return result
 
+parser = ArgumentParser(description="Benchmark termination analysis tools", formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("-k", "--koat", type=str, default="./koat", help="path to the KoAT executable", metavar="PATH_TO_KOAT")
+parser.add_argument("-p", "--programs", type=str, default="examples", help="path to a folder with programs to benchmark", metavar="FOLDER")
+args = parser.parse_args()
 
-path_to_koat = "~/uni/ba/KoAT2/_build/default/bin/main.exe prob-analyse"
+path_to_koat = args.koat
 
 koat_options = cartesian_product(
     {
@@ -104,12 +109,12 @@ koat_options = cartesian_product(
 
 tools = {
     "KoAT2": {
-        "cmd": f"{path_to_koat} {OPTIONS} -i",
+        "cmd": f"{path_to_koat} prob-analyse {OPTIONS} -i",
         "options": koat_options
     }
 }
 
-directoy = "examples"
+directoy = args.programs
 extension = ".koat"
 
 
